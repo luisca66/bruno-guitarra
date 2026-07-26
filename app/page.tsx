@@ -48,7 +48,7 @@ function Field({label,...props}:{label:string}&React.InputHTMLAttributes<HTMLInp
 export default function Home(){
   const [data,setData]=useState<AppData>(initialData); const [ready,setReady]=useState(false); const [tab,setTab]=useState("today"); const [focus,setFocus]=useState(false); const [timer,setTimer]=useState(false); const [toast,setToast]=useState("");
   const [quiz,setQuiz]=useState({string:0,fret:0,answer:"",shown:false,hits:0,misses:0,mode:"mixto"}); const tick=useRef<ReturnType<typeof setInterval>|null>(null);
-  useEffect(()=>{queueMicrotask(()=>{try{const raw=localStorage.getItem(key);if(raw){const parsed=JSON.parse(raw);if(parsed.version===1)setData(parsed)}}catch{}setReady(true)});navigator.serviceWorker?.register("/sw.js").catch(()=>{})},[]);
+  useEffect(()=>{queueMicrotask(()=>{try{const raw=localStorage.getItem(key);if(raw){const parsed=JSON.parse(raw);if(parsed.version===1)setData(parsed)}}catch{}setReady(true)});navigator.serviceWorker?.register("./sw.js").catch(()=>{})},[]);
   useEffect(()=>{if(!ready)return;localStorage.setItem(key,JSON.stringify(data));document.documentElement.dataset.theme=data.settings.theme},[data,ready]);
   const day=data.days[today()]??makeDay(data.settings); const updateDay=(fn:(d:Day)=>Day)=>setData(x=>({...x,days:{...x.days,[today()]:fn(x.days[today()]??makeDay(x.settings))}}));
   useEffect(()=>{if(timer){tick.current=setInterval(()=>updateDay(d=>{const seconds=Math.max(0,d.reading.seconds-1);if(seconds===0)queueMicrotask(()=>{setTimer(false);setToast("Tiempo de lectura terminado")});return {...d,reading:{...d.reading,seconds}}}),1000)}return()=>{if(tick.current)clearInterval(tick.current)}},[timer]);
